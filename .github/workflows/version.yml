@@ -20,7 +20,6 @@ jobs:
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
-      id-token: write  # Required for OIDC
       contents: write      # Required for pushing commits/tags
       pull-requests: read  # Required for PR info
     steps:
