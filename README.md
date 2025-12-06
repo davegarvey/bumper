@@ -65,6 +65,10 @@ jobs:
     - run: npm ci
     - run: npm test
     - run: npm run lint
+    - name: Configure Git
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
     - name: Install bumper
       run: npm install @davegarvey/bumper
     - name: Bump version and release
