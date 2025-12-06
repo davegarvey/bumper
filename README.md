@@ -155,7 +155,7 @@ jobs:
 
 - Check commit format with conventional commits specification
 - Verify CI permissions and branch protection rules
-- Test locally with `bump --no-push` for debugging
+- Test locally with `bump` for debugging (pushing is disabled by default)
 
 ## For AI Users
 
