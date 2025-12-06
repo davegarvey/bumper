@@ -34,16 +34,18 @@ Create `.versionrc.json` in your project root:
 
 ## GitHub Actions
 
-Add this to your CI workflow to automatically bump versions on merges to main:
+Add this to your CI workflow to automatically bump versions when PRs are merged to main:
 
 ```yaml
 name: Release
 on:
-  push:
-    branches: [ main ]
+  pull_request:
+    types: [closed]
+    branches: [main]
 
 jobs:
   release:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
