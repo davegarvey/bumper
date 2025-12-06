@@ -54,13 +54,8 @@ jobs:
       id: pre-bump
       run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
-
-    - name: Get new version
-      id: post-bump
-      run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-
     - name: Bump version
-      if: github.event.inputs.skip_version_bump != 'true'
+      if: github.event_name != 'workflow_dispatch' || github.event.inputs.skip_version_bump != 'true'
       run: npx bump --push --tag
 
     - name: Get final version
