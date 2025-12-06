@@ -21,9 +21,8 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 18
-        cache: npm
 
-    - name: Configure Git
+    - run: npm install
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
