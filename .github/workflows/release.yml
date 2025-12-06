@@ -41,8 +41,21 @@ jobs:
     - name: Run linting
       run: npm run lint
 
+    - name: Get current version
+      id: pre-bump
+      run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
     - name: Bump version and release
       run: npx bump --push --tag
 
+    - name: Get new version
+      id: post-bump
+      run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+    - name: Update npm for trusted publishing
+      if: steps.pre-bump.outputs.version != steps.post-bump.outputs.version
+      run: npm install -g npm@latest
+
     - name: Publish to npm
-      run: npm publish # uses NPM trusted publisher
+      if: steps.pre-bump.outputs.version != steps.post-bump.outputs.version
+      run: npm publish
