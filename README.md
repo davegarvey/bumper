@@ -76,3 +76,7 @@ jobs:
 - `fix:`, `refactor:`, `perf:` → patch bump
 - Any type with `!` or `BREAKING CHANGE` → major bump
 - `docs:`, `test:`, `chore:`, `config:` → no bump
+
+## For AI Users
+
+This tool is optimised for AI-generated commit messages that follow conventional commit format. See [.github/prompts/sc.prompt.md](.github/prompts/sc.prompt.md) for an example prompt that generates commits compatible with bumper.
