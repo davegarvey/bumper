@@ -58,11 +58,13 @@ try {
 
     if (shouldPush) {
         push();
-        console.log('Pushed changes and tags.');
+        const actions = ['Pushed changes'];
+        if (shouldTag) actions.push('and tags');
+        console.log(`${actions.join(' ')}.`);
     } else {
         const actions = ['Committed'];
-        if (shouldTag) actions.push('tagged');
-        console.log(`${actions.join(' and ')} locally.`);
+        if (shouldTag) actions.push('and tagged');
+        console.log(`${actions.join(' ')} locally.`);
     }
 
 } catch (error) {
