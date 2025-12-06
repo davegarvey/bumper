@@ -100,7 +100,7 @@ jobs:
     - name: Install bumper
       run: npm install @davegarvey/bumper
     - name: Bump version and release
-      run: npx bump
+      run: npx bump --push --tag
 ```
 
 ### CI Best Practices

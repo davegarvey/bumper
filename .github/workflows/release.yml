@@ -37,5 +37,5 @@ jobs:
     - name: Run linting
       run: npm run lint
 
-    - name: Bump version
-      run: npx bump
+    - name: Bump version and release
+      run: npx bump --push --tag
