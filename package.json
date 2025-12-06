@@ -1,0 +1,34 @@
+{
+    "name": "@davegarvey/bumper",
+    "version": "0.1.0",
+    "description": "Automatic semantic versioning based on conventional commits, optimized for AI-generated commit messages",
+    "type": "module",
+    "bin": {
+        "auto-version": "./bin/auto-version.js"
+    },
+    "files": [
+        "bin/",
+        "lib/",
+        ".versionrc.json"
+    ],
+    "keywords": [
+        "semver",
+        "versioning",
+        "conventional-commits",
+        "automation",
+        "ci-cd",
+        "semantic-release"
+    ],
+    "engines": {
+        "node": ">=18"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/davegarvey/bumper.git"
+    },
+    "author": "David Garvey",
+    "license": "MIT",
+    "devDependencies": {
+        "vitest": "^4.0.15"
+    }
+}
