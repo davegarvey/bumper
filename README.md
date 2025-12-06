@@ -34,9 +34,30 @@ Create `.versionrc.json` in your project root:
 
 ## GitHub Actions
 
+Add this to your CI workflow to automatically bump versions on merges to main:
+
 ```yaml
-- name: Auto version
-  run: npx @davegarvey/bumper
+name: Release
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Required for commit analysis
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: npm
+    - run: npm ci
+    - run: npm test
+    - run: npm run lint
+    - name: Bump version and release
+      run: npx @davegarvey/bumper
 ```
 
 ## How It Works

@@ -1,18 +1,18 @@
 import js from '@eslint/js';
 
 export default [
-  js.configs.recommended,
-  {
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: 'module',
-      globals: {
-        console: 'readonly',
-        process: 'readonly',
-      },
+    js.configs.recommended,
+    {
+        languageOptions: {
+            ecmaVersion: 2022,
+            sourceType: 'module',
+            globals: {
+                console: 'readonly',
+                process: 'readonly',
+            },
+        },
+        rules: {
+            // Add any custom rules here
+        },
     },
-    rules: {
-      // Add any custom rules here
-    },
-  },
 ];
