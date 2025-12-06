@@ -19,7 +19,12 @@ bump
 # Or with npx
 npx bump
 
-# Don't push to remote
+# Push to remote
+bump --push
+# or
+npx bump --push
+
+# Don't push to remote (default)
 bump --no-push
 # or
 npx bump --no-push
@@ -39,7 +44,7 @@ Create `.versionrc.json` in your project root:
   "packageFiles": ["package.json", "client/package.json"],
   "commitPrefix": "chore: bump version",
   "tagPrefix": "v",
-  "push": true
+  "push": false
 }
 ```
 
@@ -48,7 +53,7 @@ Create `.versionrc.json` in your project root:
 - **`packageFiles`**: Array of package.json files to update (default: `["package.json"]`)
 - **`commitPrefix`**: Prefix for version bump commits (default: `"chore: bump version"`)
 - **`tagPrefix`**: Prefix for git tags (default: `"v"`)
-- **`push`**: Whether to push commits/tags to remote (default: `true`)
+- **`push`**: Whether to push commits/tags to remote (default: `false`)
 
 ### Best Practices
 
