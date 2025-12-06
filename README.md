@@ -58,8 +58,10 @@ jobs:
     - run: npm ci
     - run: npm test
     - run: npm run lint
+    - name: Install bumper
+      run: npm install @davegarvey/bumper
     - name: Bump version and release
-      run: npx @davegarvey/bumper
+      run: npx auto-version
 ```
 
 ## How It Works
