@@ -4,10 +4,20 @@ on:
   pull_request:
     types: [closed]
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Skip actual publishing (for testing)'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+        - 'true'
+        - 'false'
 
 jobs:
   release:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       id-token: write  # Required for OIDC
@@ -57,7 +67,18 @@ jobs:
       run: npm install -g npm@latest
 
     - name: Publish to npm
-      if: steps.pre-bump.outputs.version != steps.post-bump.outputs.version
+      if: steps.pre-bump.outputs.version != steps.post-bump.outputs.version && github.event.inputs.dry_run != 'true'
       run: npm publish
       env:
         NODE_AUTH_TOKEN: ''  # Clear to use OIDC trusted publishing
+
+    - name: Dry run summary
+      if: github.event.inputs.dry_run == 'true'
+      run: |
+        echo "🔍 DRY RUN MODE - No actual publishing performed"
+        echo "Version would change: ${{ steps.pre-bump.outputs.version }} → ${{ steps.post-bump.outputs.version }}"
+        if [ "${{ steps.pre-bump.outputs.version }}" != "${{ steps.post-bump.outputs.version }}" ]; then
+          echo "✅ Would publish @davegarvey/bumper@${{ steps.post-bump.outputs.version }} to npm"
+        else
+          echo "⏭️  Would skip publishing (version unchanged)"
+        fi
