@@ -5,6 +5,17 @@ import { analyseCommits } from '../lib/analyser.js';
 import { getCurrentVersion, bumpVersion, updatePackageFiles } from '../lib/versioner.js';
 import { loadConfig } from '../lib/config.js';
 
+if (process.argv.includes('--help') || process.argv.includes('-h')) {
+    console.log(`Usage: bump [options]
+
+Options:
+  --no-push    Don't push changes to remote
+  --help, -h   Show this help message
+
+Automatic semantic versioning based on conventional commits.`);
+    process.exit(0);
+}
+
 const config = loadConfig();
 const shouldPush = !process.argv.includes('--no-push') && config.push;
 

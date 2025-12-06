@@ -23,6 +23,11 @@ npx bump
 bump --no-push
 # or
 npx bump --no-push
+
+# Show help
+bump --help
+# or
+bump -h
 ```
 
 ## Configuration
