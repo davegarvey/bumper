@@ -70,7 +70,6 @@ jobs:
     permissions:
       contents: write      # Required for pushing commits/tags
       pull-requests: read  # Required for PR info
-      actions: read        # Required for workflow info
     steps:
     - uses: actions/checkout@v4
       with:
