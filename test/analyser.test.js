@@ -127,6 +127,12 @@ describe('analyseCommits', () => {
             expect(result.unknownCommits).toEqual(['unknown: thing']);
         });
 
+        it('should not track configured types as unknown', () => {
+            const result = analyseCommits(['docs: update readme'], customConfig);
+            expect(result.bump).toBe('minor');
+            expect(result.unknownCommits).toEqual([]);
+        });
+
         it('should still handle breaking changes as major', () => {
             expect(analyseCommits(['fix!: thing'], customConfig).bump).toBe('major');
         });
