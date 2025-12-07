@@ -21,21 +21,25 @@ npx bump
 
 # Push to remote
 bump --push
-# or
-npx bump --push
 
 # Create git tag
 bump --tag
-# or
-npx bump --tag
+
+# Raw mode (output only version, dry run)
+bump --raw
+
+# With explicit options overrides
+bump --tag --tag-prefix "release-v"
+bump --commit-prefix "chore(release): bump"
+bump --preset git --tag
 
 # Show help
 bump --help
-# or
-bump -h
 ```
 
 ## Configuration
+
+You can use a file-based configuration for Bumper instead of CLI arguments.
 
 Create `.versionrc.json` in your project root:
 
@@ -45,7 +49,8 @@ Create `.versionrc.json` in your project root:
   "commitPrefix": "chore: bump version",
   "tagPrefix": "v",
   "push": false,
-  "tag": false
+  "tag": false,
+  "preset": "node"
 }
 ```
 
@@ -56,6 +61,9 @@ Create `.versionrc.json` in your project root:
 - **`tagPrefix`**: Prefix for git tags (default: `"v"`)
 - **`push`**: Whether to push commits/tags to remote (default: `false`)
 - **`tag`**: Whether to create git tags for versions (default: `false`)
+- **`preset`**: Versioning strategy to use (default: `"node"`). Options:
+  - `"node"`: Updates `package.json` and `package-lock.json`
+  - `"git"`: Tracks version via git tags only (no file updates)
 
 ### Best Practices
 
