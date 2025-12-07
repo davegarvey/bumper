@@ -44,16 +44,19 @@ Evaluate changed files in the repository and create commits following the Conven
 
 ## Workflow
 
-1. **Analyse changes:**
+1. **Detect changes:**
+   - Identify changed files in the working directory using `git status` or similar.
+
+2. **Analyse changes:**
    - Identify logical groupings of changes by type.
    - Separate unrelated changes into distinct commit groups.
    - If a commit conforms to more than one type, split into multiple commits.
 
-2. **Prepare commits:**
+3. **Prepare commits:**
    - For each group, stage only the files belonging to that group.
    - Generate a commit message following the format above.
 
-3. **Perform commits:**
+4. **Perform commits:**
    - Stage the files for each group.
    - Commit with the generated message.
 
