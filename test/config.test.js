@@ -15,7 +15,8 @@ describe('config', () => {
                 commitPrefix: 'chore: bump version',
                 tagPrefix: 'v',
                 push: false,
-                tag: false
+                tag: false,
+                preset: 'node'
             });
         });
 
@@ -33,7 +34,8 @@ describe('config', () => {
                 commitPrefix: 'chore: bump version',
                 tagPrefix: 'v',
                 push: false,
-                tag: false
+                tag: false,
+                preset: 'node'
             });
 
             // Cleanup
@@ -50,7 +52,8 @@ describe('config', () => {
                 commitPrefix: 'chore: bump version',
                 tagPrefix: 'v',
                 push: false,
-                tag: false
+                tag: false,
+                preset: 'node'
             });
 
             // Cleanup
@@ -68,7 +71,8 @@ describe('config', () => {
                 commitPrefix: 'chore: bump version',
                 tagPrefix: 'v',
                 push: false,
-                tag: false
+                tag: false,
+                preset: 'node'
             });
 
             // Cleanup
