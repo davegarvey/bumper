@@ -32,6 +32,8 @@ bump --raw
 bump --tag --tag-prefix "release-v"
 bump --commit-prefix "chore(release): bump"
 bump --preset git --tag
+bump --release-notes --tag
+bump --package-files "package.json,client/package.json"
 
 # Show help
 bump --help
