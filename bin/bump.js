@@ -8,12 +8,13 @@ import { loadConfig } from '../lib/config.js';
 import { loadStrategy } from '../lib/strategies/loader.js';
 
 const argv = minimist(process.argv.slice(2), {
-    boolean: ['push', 'tag', 'raw', 'help'],
+    boolean: ['push', 'tag', 'raw', 'help', 'release-notes'],
     string: ['preset', 'tag-prefix', 'commit-prefix', 'package-files'],
     alias: {
         h: 'help',
         p: 'push',
-        t: 'tag'
+        t: 'tag',
+        r: 'release-notes'
     }
 });
 
@@ -23,6 +24,7 @@ if (argv.help) {
 Options:
   --push, -p            Push changes to remote
   --tag, -t             Create git tag for the version
+  --release-notes, -r   Include release notes in the git tag annotation
   --raw                 Output only the new version string (dry run, no changes)
   --preset <name>       Versioning strategy (node, git)
   --tag-prefix <str>    Prefix for git tags (default: v)
@@ -44,6 +46,11 @@ if (argv['commit-prefix']) config.commitPrefix = argv['commit-prefix'];
 if (argv['package-files']) config.packageFiles = argv['package-files'].split(',');
 if (argv.push) config.push = true;
 if (argv.tag) config.tag = true;
+if (argv['release-notes']) config.releaseNotes = true;
+
+if (config.releaseNotes && !config.tag) {
+    log('Warning: --release-notes requires --tag to be effective.');
+}
 
 const isRaw = argv.raw;
 
@@ -77,6 +84,11 @@ try {
     log(`Last tag: ${lastTag || 'none'}`);
 
     const commits = getCommitsSinceTag(lastTag);
+
+    let releaseNotesMessage = null;
+    if (config.releaseNotes && commits.length > 0) {
+        releaseNotesMessage = commits.map(c => `- ${c}`).join('\n');
+    }
 
     if (commits.length === 0) {
         log('No commits since last tag.');
@@ -130,7 +142,7 @@ try {
     }
 
     if (config.tag) {
-        createTag(newVersion, config);
+        createTag(newVersion, config, releaseNotesMessage);
     }
 
     if (config.push) {
