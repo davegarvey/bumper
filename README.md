@@ -108,6 +108,58 @@ Create `.versionrc.json` in your project root:
   - `"git"`: Tracks version via git tags only (no file updates)
   - `"node"`: Updates `package.json` version field
 
+## Versioning Strategies
+
+Bumper supports different versioning strategies depending on your project type:
+
+### Rust Projects (`preset: "rust"`)
+
+**Best for**: Rust applications and libraries
+
+**What it does**:
+- Updates the `version` field in `Cargo.toml`
+- Uses semantic versioning (major.minor.patch)
+- Integrates with Cargo's package management
+
+**Example usage**:
+```bash
+bumper --preset rust --push --tag
+```
+
+**When to use**: Default choice for Rust projects. Automatically updates your Cargo.toml and works seamlessly with `cargo publish`.
+
+### Node.js Projects (`preset: "node"`)
+
+**Best for**: JavaScript/TypeScript applications and packages
+
+**What it does**:
+- Updates the `version` field in `package.json`
+- Updates `package-lock.json` if present
+- Compatible with npm/yarn ecosystem
+
+**Example usage**:
+```bash
+bumper --preset node --push --tag
+```
+
+**When to use**: For Node.js projects that need version synchronization with npm registry publishing.
+
+### Git-only Projects (`preset: "git"`)
+
+**Best for**: Projects that don't need file-based versioning
+
+**What it does**:
+- Only creates git tags for versioning
+- No files are modified
+- Tracks versions purely through git history
+
+**Example usage**:
+```bash
+bumper --preset git --push --tag
+```
+
+**When to use**: For projects that handle versioning differently (e.g., through CI/CD variables, Docker tags, or other systems). Useful for monorepos or projects with custom versioning schemes.
+
 ### Best Practices
 
 - **Branch Protection**: Protect your main branch and require CI checks to pass
