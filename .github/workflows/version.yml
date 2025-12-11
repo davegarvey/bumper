@@ -1,8 +1,11 @@
 name: Version
 
 on:
-  push:
-    branches: [ main ]
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+    branches: [main]
   workflow_dispatch:
     inputs:
       skip_version_bump:
@@ -17,12 +20,14 @@ on:
 jobs:
   version:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     permissions:
       contents: write      # Required for pushing commits/tags
       pull-requests: read  # Required for PR info
     steps:
     - uses: actions/checkout@v4
       with:
+        ref: ${{ github.event.workflow_run.head_branch || github.ref }}
         fetch-depth: 0
 
     - name: Setup Rust
