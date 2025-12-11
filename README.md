@@ -117,7 +117,35 @@ Create `.versionrc.json` in your project root:
 
 ## GitHub Actions
 
-In a typical CI/CD scenario, bumper runs automatically when PRs are merged to main:
+### Recommended: Use GitHub Action (Simplest)
+
+```yaml
+name: Release
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - uses: davegarvey/bumper@v1
+      with:
+        push: true
+        tag: true
+```
+
+### Alternative: Manual Setup
+
+If you prefer more control over the process:
 
 ```yaml
 name: Release
@@ -153,32 +181,6 @@ jobs:
       run: cargo install bumper
     - name: Bump version and release
       run: bumper --push --tag
-```
-
-### Alternative: Use GitHub Action
-
-```yaml
-name: Release
-on:
-  pull_request:
-    types: [closed]
-    branches: [main]
-
-jobs:
-  release:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: read
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - uses: davegarvey/bumper@v1
-      with:
-        push: true
-        tag: true
 ```
 
 ### CI Best Practices
