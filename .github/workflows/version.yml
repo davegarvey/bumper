@@ -25,54 +25,43 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: Setup Rust
+      uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
-        node-version: 20
-        registry-url: 'https://registry.npmjs.org'
-
-    - name: Install dependencies
-      run: rm -rf node_modules package-lock.json && npm install
+        toolchain: stable
 
     - name: Configure Git
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
-    - name: Install bumper
-      run: npm install @davegarvey/bumper
+    - name: Build bumper
+      run: cargo build --release
 
     - name: Run tests
-      run: npm test
-
-    - name: Run linting
-      run: npm run lint
+      run: cargo test
 
     - name: Get current version
       id: pre-bump
-      run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      run: echo "version=$(grep '^version' Cargo.toml | head -1 | cut -d'"' -f2)" >> $GITHUB_OUTPUT
 
     - name: Bump version
       if: github.event_name != 'workflow_dispatch' || github.event.inputs.skip_version_bump != 'true'
-      run: npx bump --push --tag --release-notes
+      run: ./target/release/bump --push --tag --release-notes
 
     - name: Get final version
       id: final-version
-      run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      run: echo "version=$(grep '^version' Cargo.toml | head -1 | cut -d'"' -f2)" >> $GITHUB_OUTPUT
 
     - name: Version summary
       run: |
-        echo "📦 Version workflow completed!"
+        echo "Version workflow completed."
         if [ "${{ github.event.inputs.skip_version_bump }}" = "true" ]; then
-          echo "🔍 TEST MODE - Version bumping skipped"
-          echo "Current version: ${{ steps.final-version.outputs.version }}"
+          echo "TEST MODE: Version bumping skipped. Current: ${{ steps.final-version.outputs.version }}"
         else
-          echo "Version: ${{ steps.final-version.outputs.version }}"
           if [ "${{ steps.pre-bump.outputs.version }}" != "${{ steps.final-version.outputs.version }}" ]; then
-            echo "✅ Version bumped from ${{ steps.pre-bump.outputs.version }} to ${{ steps.final-version.outputs.version }}"
-            echo "🏷️  Tag v${{ steps.final-version.outputs.version }} created and pushed"
-            echo "📤 Publishing will be handled by the separate publish workflow when tag is pushed"
+            echo "Bumped from ${{ steps.pre-bump.outputs.version }} to ${{ steps.final-version.outputs.version }}. Tag created."
           else
-            echo "⏭️  No version change (no new commits since last version)"
+            echo "No version change: ${{ steps.final-version.outputs.version }}"
           fi
         fi

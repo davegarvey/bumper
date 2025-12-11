@@ -8,21 +8,28 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: Setup Rust
+      uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
-        node-version: 20
+        toolchain: stable
+        components: clippy, rustfmt
 
-    - name: Install dependencies
-      run: rm -rf node_modules package-lock.json && npm install
+    - name: Check formatting
+      run: cargo fmt --all -- --check
 
-    - name: Run linting
-      run: npm run lint
+    - name: Run clippy
+      run: cargo clippy --all-targets --all-features -- -D warnings
+
+    - name: Build
+      run: cargo build --release
 
     - name: Run tests
-      run: npm test
+      run: cargo test --all-features
