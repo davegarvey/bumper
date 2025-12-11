@@ -106,7 +106,7 @@ Create `.versionrc.json` in your project root:
 - **`preset`**: Versioning strategy to use (default: `"rust"`). Options:
   - `"rust"`: Updates `Cargo.toml` version field
   - `"git"`: Tracks version via git tags only (no file updates)
-  - `"node"`: Updates `package.json` (legacy support)
+  - `"node"`: Updates `package.json` version field
 
 ### Best Practices
 
