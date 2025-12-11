@@ -20,7 +20,7 @@ impl BumpType {
             BumpType::None => "none",
         }
     }
-    
+
     pub fn label(&self) -> &'static str {
         match self {
             BumpType::Major => "Major",
@@ -29,7 +29,7 @@ impl BumpType {
             BumpType::None => "None",
         }
     }
-    
+
     pub fn max(&self, other: BumpType) -> BumpType {
         match (self, other) {
             (BumpType::Major, _) | (_, BumpType::Major) => BumpType::Major,
@@ -51,7 +51,7 @@ pub fn analyse_commits(commits: &[String], config: &Config) -> AnalysisResult {
         .iter()
         .filter(|msg| !msg.starts_with(BUMP_COMMIT_PREFIX))
         .collect();
-    
+
     if substantive_commits.is_empty() {
         return AnalysisResult {
             bump: BumpType::None,
@@ -59,20 +59,20 @@ pub fn analyse_commits(commits: &[String], config: &Config) -> AnalysisResult {
             unknown_commits: vec![],
         };
     }
-    
+
     let mut bump = BumpType::None;
     let mut triggering_commits = Vec::new();
     let mut unknown_commits = Vec::new();
-    
+
     let commit_type_regex = Regex::new(r"^([a-z]+)(?:\([^)]+\))?(!?):").unwrap();
-    
+
     for msg in substantive_commits {
         if let Some(captures) = commit_type_regex.captures(msg) {
             let commit_type = captures.get(1).map(|m| m.as_str()).unwrap_or("");
             let has_exclamation = captures.get(2).map(|m| m.as_str()).unwrap_or("") == "!";
-            
+
             let has_breaking = has_exclamation || msg.to_lowercase().contains("breaking change");
-            
+
             let commit_bump = if has_breaking {
                 BumpType::Major
             } else if let Some(bump_str) = config.types.get(commit_type) {
@@ -86,15 +86,15 @@ pub fn analyse_commits(commits: &[String], config: &Config) -> AnalysisResult {
                 unknown_commits.push(msg.to_string());
                 BumpType::None
             };
-            
+
             bump = bump.max(commit_bump);
-            
+
             if commit_bump != BumpType::None {
                 triggering_commits.push(format!("{}: {}", commit_bump.label(), msg));
             }
         }
     }
-    
+
     AnalysisResult {
         bump,
         triggering_commits,
@@ -105,38 +105,38 @@ pub fn analyse_commits(commits: &[String], config: &Config) -> AnalysisResult {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_bump_type_max() {
         assert_eq!(BumpType::Major.max(BumpType::Minor), BumpType::Major);
         assert_eq!(BumpType::Minor.max(BumpType::Patch), BumpType::Minor);
         assert_eq!(BumpType::Patch.max(BumpType::None), BumpType::Patch);
     }
-    
+
     #[test]
     fn test_analyse_commits_feat() {
         let commits = vec!["feat: add new feature".to_string()];
         let config = Config::default();
         let result = analyse_commits(&commits, &config);
-        
+
         assert_eq!(result.bump, BumpType::Minor);
     }
-    
+
     #[test]
     fn test_analyse_commits_fix() {
         let commits = vec!["fix: resolve bug".to_string()];
         let config = Config::default();
         let result = analyse_commits(&commits, &config);
-        
+
         assert_eq!(result.bump, BumpType::Patch);
     }
-    
+
     #[test]
     fn test_analyse_commits_breaking() {
         let commits = vec!["feat!: breaking change".to_string()];
         let config = Config::default();
         let result = analyse_commits(&commits, &config);
-        
+
         assert_eq!(result.bump, BumpType::Major);
     }
 }

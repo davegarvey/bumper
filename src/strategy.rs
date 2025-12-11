@@ -7,15 +7,15 @@ pub trait Strategy {
     fn update_files(&self, new_version: &Version) -> BumperResult<Vec<String>>;
 }
 
-pub mod node;
 pub mod git;
+pub mod node;
 pub mod rust;
 
 pub fn load_strategy(config: &Config) -> Box<dyn Strategy> {
     if config.raw {
         return Box::new(git::GitStrategy::new(config.clone()));
     }
-    
+
     match config.preset.as_str() {
         "node" => Box::new(node::NodeStrategy::new(config.clone())),
         "git" => Box::new(git::GitStrategy::new(config.clone())),

@@ -12,9 +12,6 @@ pub enum BumperError {
     #[error("Invalid version format: {0}")]
     InvalidVersion(String),
 
-    #[error("Configuration error: {0}")]
-    ConfigError(String),
-
     #[error("IO error: {0}")]
     IoError(#[from] std::io::Error),
 
