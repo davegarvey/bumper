@@ -74,9 +74,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-          cache: true
-
-      - name: Install cross-compilation tools
+      - name: Setup Rust
         if: matrix.cross
         run: |
           cargo install cross --git https://github.com/cross-rs/cross
