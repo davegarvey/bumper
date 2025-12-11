@@ -1,42 +1,82 @@
 # Bumper
 
+[![CI](https://github.com/davegarvey/bumper/actions/workflows/ci.yml/badge.svg)](https://github.com/davegarvey/bumper/actions/workflows/ci.yml)
+[![Release](https://github.com/davegarvey/bumper/actions/workflows/release.yml/badge.svg)](https://github.com/davegarvey/bumper/actions/workflows/release.yml)
+[![Version](https://img.shields.io/github/v/release/davegarvey/bumper)](https://github.com/davegarvey/bumper/releases)
+[![Rust](https://img.shields.io/badge/rust-1.70%2B-orange)](https://www.rust-lang.org/)
+
 Automatic semantic versioning based on conventional commits, optimised for AI-generated commit messages.
 
 ## Installation
 
+### Pre-built Binaries (Recommended)
+
+Download from [GitHub Releases](https://github.com/davegarvey/bumper/releases):
+
 ```bash
-npm install -g @davegarvey/bumper
-# or
-npx @davegarvey/bumper
+# Linux x86_64
+curl -L https://github.com/davegarvey/bumper/releases/download/v2.3.1/bumper-linux-x86_64.tar.gz | tar xz
+sudo mv bumper /usr/local/bin/
+
+# macOS Intel
+curl -L https://github.com/davegarvey/bumper/releases/download/v2.3.1/bumper-macos-x86_64.tar.gz | tar xz
+sudo mv bumper /usr/local/bin/
+
+# macOS Apple Silicon
+curl -L https://github.com/davegarvey/bumper/releases/download/v2.3.1/bumper-macos-aarch64.tar.gz | tar xz
+sudo mv bumper /usr/local/bin/
+
+# Windows
+curl -L https://github.com/davegarvey/bumper/releases/download/v2.3.1/bumper-windows-x86_64.zip -o bumper.zip
+unzip bumper.zip
+# Add to PATH
+```
+
+### Cargo Install
+
+```bash
+cargo install bumper
+```
+
+### GitHub Action
+
+```yaml
+uses: davegarvey/bumper@v1
+```
+
+### From Source
+
+```bash
+git clone https://github.com/davegarvey/bumper.git
+cd bumper
+cargo build --release
+# Binary available at target/release/bumper
 ```
 
 ## Usage
 
 ```bash
 # Run in your project root
-bump
-
-# Or with npx
-npx bump
+bumper
 
 # Push to remote
-bump --push
+bumper --push
 
 # Create git tag
-bump --tag
+bumper --tag
 
 # Raw mode (output only version, dry run)
-bump --raw
+bumper --raw
 
 # With explicit options overrides
-bump --tag --tag-prefix "release-v"
-bump --commit-prefix "chore(release): bump"
-bump --preset git --tag
-bump --release-notes --tag
-bump --package-files "package.json,client/package.json"
+bumper --tag --tag-prefix "release-v"
+bumper --commit-prefix "chore(release): bump"
+bumper --preset git --tag
+bumper --release-notes --tag
+bumper --package-files "Cargo.toml,client/Cargo.toml"
 
 # Show help
-bump --help
+bumper --help
 ```
 
 ## Configuration
@@ -47,25 +87,26 @@ Create `.versionrc.json` in your project root:
 
 ```json
 {
-  "packageFiles": ["package.json", "client/package.json"],
+  "packageFiles": ["Cargo.toml", "client/Cargo.toml"],
   "commitPrefix": "chore: bump version",
   "tagPrefix": "v",
   "push": false,
   "tag": false,
-  "preset": "node"
+  "preset": "rust"
 }
 ```
 
 ### Configuration Options
 
-- **`packageFiles`**: Array of package.json files to update (default: `["package.json"]`)
+- **`packageFiles`**: Array of Cargo.toml files to update (default: `["Cargo.toml"]`)
 - **`commitPrefix`**: Prefix for version bump commits (default: `"chore: bump version"`)
 - **`tagPrefix`**: Prefix for git tags (default: `"v"`)
 - **`push`**: Whether to push commits/tags to remote (default: `false`)
 - **`tag`**: Whether to create git tags for versions (default: `false`)
-- **`preset`**: Versioning strategy to use (default: `"node"`). Options:
-  - `"node"`: Updates `package.json` and `package-lock.json`
+- **`preset`**: Versioning strategy to use (default: `"rust"`). Options:
+  - `"rust"`: Updates `Cargo.toml` version field
   - `"git"`: Tracks version via git tags only (no file updates)
+  - `"node"`: Updates `package.json` (legacy support)
 
 ### Best Practices
 
@@ -96,35 +137,62 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0  # Required for commit analysis
-    - uses: actions/setup-node@v4
+    - name: Setup Rust
+      uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
-        node-version: 18
-        cache: npm
-    - run: npm ci
-    - run: npm test
-    - run: npm run lint
+        toolchain: stable
+    - name: Run tests
+      run: cargo test
+    - name: Run clippy
+      run: cargo clippy -- -D warnings
     - name: Configure Git
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
     - name: Install bumper
-      run: npm install @davegarvey/bumper
+      run: cargo install bumper
     - name: Bump version and release
-      run: npx bump --push --tag
+      run: bumper --push --tag
+```
+
+### Alternative: Use GitHub Action
+
+```yaml
+name: Release
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - uses: davegarvey/bumper@v1
+      with:
+        push: true
+        tag: true
 ```
 
 ### CI Best Practices
 
 - **Permissions**: Add `contents: write` permission for automated commits/tags
 - **Branch Protection**: Require CI checks and restrict direct pushes to main
-- **Testing**: Always run tests before releasing
+- **Testing**: Always run `cargo test` and `cargo clippy` before releasing
 - **Fetch Depth**: Use `fetch-depth: 0` for complete commit history analysis
 
 ## How It Works
 
 1. Analyzes commits since last tag
 2. Determines version bump (major/minor/patch) based on conventional commits
-3. Updates package.json files
+3. Updates Cargo.toml files
 4. Creates git commit
 5. Optionally creates git tag
 6. Optionally pushes to remote
@@ -145,10 +213,10 @@ jobs:
 - **Solution**: Configure git identity in CI before running bumper
 - **Example**: Add git config step as shown in CI workflow
 
-**"auto-version: not found"**
+**"bumper: command not found"**
 
-- **Solution**: Install bumper locally before running: `npm install @davegarvey/bumper`
-- **Why**: npx may not resolve bins from remote packages reliably
+- **Solution**: Install bumper before running: `cargo install bumper`
+- **Why**: Ensure the binary is in PATH or use full path
 
 **No version bump on merge**
 
@@ -161,11 +229,17 @@ jobs:
 - **Solution**: Ensure `.versionrc.json` contains valid JSON
 - **Note**: Empty or invalid files fall back to defaults with a warning
 
+**Cargo.toml not found**
+
+- **Solution**: Use `--package-files` to specify correct Cargo.toml paths
+- **Check**: Verify file exists and contains valid `version` field
+
 ### Getting Help
 
 - Check commit format with conventional commits specification
 - Verify CI permissions and branch protection rules
-- Test locally with `bump` for debugging (pushing is disabled by default)
+- Test locally with `bumper` for debugging (pushing is disabled by default)
+- Run `cargo test` to verify your project setup
 
 ## For AI Users
 
