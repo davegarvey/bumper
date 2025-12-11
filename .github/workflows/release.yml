@@ -60,10 +60,6 @@ jobs:
             os: ubuntu-latest
             name: bumper-linux-aarch64
             cross: true
-          - target: x86_64-apple-darwin
-            os: macos-latest
-            name: bumper-macos-x86_64
-            cross: true
           - target: aarch64-apple-darwin
             os: macos-latest
             name: bumper-macos-aarch64
