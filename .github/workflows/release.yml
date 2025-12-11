@@ -43,7 +43,7 @@ jobs:
 
   build-release:
     name: Build Release
-    needs: create-release
+    needs: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.test_release == 'true' && [] || ['create-release'] }}
     strategy:
       fail-fast: false
       matrix:
