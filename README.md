@@ -41,7 +41,7 @@ cargo install bumper
 ### GitHub Action
 
 ```yaml
-uses: davegarvey/bumper@v1
+uses: davegarvey/bumper@v3.0.0
 ```
 
 ### From Source
@@ -205,7 +205,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - uses: davegarvey/bumper@v1
+    - uses: davegarvey/bumper@v3.0.0
       with:
         push: true
         tag: true
