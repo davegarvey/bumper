@@ -55,23 +55,22 @@ jobs:
     needs: create-release
     strategy:
       fail-fast: false
-      matrix:
         include:
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
-            name: bumper-linux-x86_64
+            name: grubble-linux-x86_64
             cross: true
           - target: aarch64-unknown-linux-musl
             os: ubuntu-latest
-            name: bumper-linux-aarch64
+            name: grubble-linux-aarch64
             cross: true
           - target: aarch64-apple-darwin
             os: macos-latest
-            name: bumper-macos-aarch64
+            name: grubble-macos-aarch64
             cross: false
           - target: x86_64-pc-windows-msvc
             os: windows-latest
-            name: bumper-windows-x86_64.exe
+            name: grubble-windows-x86_64.exe
             cross: false
 
     runs-on: ${{ matrix.os }}
@@ -95,25 +94,25 @@ jobs:
       - name: Strip binary (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
-          strip target/${{ matrix.target }}/release/bump || true
+          strip target/${{ matrix.target }}/release/grubble || true
 
       - name: Strip binary (macOS)
         if: matrix.os == 'macos-latest'
         run: |
-          strip target/${{ matrix.target }}/release/bump || true
+          strip target/${{ matrix.target }}/release/grubble || true
 
       - name: Prepare binary (Unix)
         if: matrix.os != 'windows-latest'
         run: |
           cd target/${{ matrix.target }}/release
-          tar czf ../../../${{ matrix.name }}.tar.gz bump
+          tar czf ../../../${{ matrix.name }}.tar.gz grubble
           cd -
 
       - name: Prepare binary (Windows)
         if: matrix.os == 'windows-latest'
         run: |
           cd target/${{ matrix.target }}/release
-          7z a ../../../${{ matrix.name }}.zip bump.exe
+          7z a ../../../${{ matrix.name }}.zip grubble.exe
           cd -
 
       - name: Generate SHA256 checksums (Unix)
