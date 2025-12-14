@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to release (e.g., 4.0.0 or v4.0.0)'
+        description: 'Version to release (e.g., 4.0.0). The "v" prefix will be added automatically.'
         required: true
         type: string
 
