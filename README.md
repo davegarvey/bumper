@@ -318,9 +318,11 @@ jobs:
 ## Commit Types
 
 - `feat:` → minor bump
-- `fix:`, `refactor:`, `perf:` → patch bump
+- `fix:` → patch bump
 - Any type with `!` or `BREAKING CHANGE` → major bump
-- `docs:`, `test:`, `chore:`, `config:` → no bump
+- `docs:`, `test:`, `chore:`, `ci:`, `build:`, `style:`, `refactor:`, `perf:` → no bump
+
+*Note: These are the default mappings. You can customize version bump behavior for any commit type using the `types` configuration in `.versionrc.json`.*
 
 ## Troubleshooting
 
