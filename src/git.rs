@@ -102,6 +102,12 @@ pub fn create_tag(version: &str, tag_prefix: &str, message: Option<&str>) -> Bum
     Ok(())
 }
 
+pub fn set_git_config(user_name: &str, user_email: &str) -> BumperResult<()> {
+    run_git_command(&["config", "user.name", user_name])?;
+    run_git_command(&["config", "user.email", user_email])?;
+    Ok(())
+}
+
 pub fn push() -> BumperResult<()> {
     run_git_command(&["push"])?;
     run_git_command(&["push", "--tags"])?;

@@ -77,6 +77,7 @@ grubble --commit-prefix "chore(release): bump"
 grubble --preset git --tag
 grubble --release-notes --tag
 grubble --package-files "Cargo.toml,client/Cargo.toml"
+grubble --git-user-name "My Name" --git-user-email "my@email.com"
 
 # Show help
 grubble --help
@@ -106,6 +107,8 @@ Create `.versionrc.json` in your project root:
 - **`tagPrefix`**: Prefix for git tags (default: `"v"`)
 - **`push`**: Whether to push commits/tags to remote (default: `false`)
 - **`tag`**: Whether to create git tags for versions (default: `false`)
+- **`gitUserName`**: Git user name for commits (default: `"Grubble"`)
+- **`gitUserEmail`**: Git user email for commits (default: `"grubble@example.com"`)
 - **`preset`**: Versioning strategy to use (default: `"git"`). Options:
   - `"rust"`: Updates `Cargo.toml` version field
   - `"git"`: Tracks version via git tags only (no file updates)
