@@ -134,14 +134,18 @@ jobs:
           fetch-depth: 0
           ref: ${{ needs.version.outputs.tag_name }}
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          tag_name: ${{ needs.version.outputs.tag_name }}
-          name: Release ${{ needs.version.outputs.tag_name }}
-          draft: false
-          prerelease: false
-          generate_release_notes: true
+          node-version: '20'
+
+      - name: Generate AI Release Notes
+        run: |
+          npx github:davegarvey/bubble \
+            --tag ${{ needs.version.outputs.tag_name }} \
+            --repo ${{ github.repository }} \
+            --github-token ${{ secrets.GITHUB_TOKEN }} \
+            --api-key ${{ secrets.OPENAI_API_KEY }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
