@@ -1,17 +1,15 @@
 name: Release
 
 on:
+  push:
+    tags:
+      - "v*"
   workflow_dispatch:
     inputs:
       tag:
         description: 'Version to release (e.g., 4.0.0). The "v" prefix will be added automatically.'
         required: true
         type: string
-  workflow_run:
-    workflows: ["Version"]
-    types:
-      - completed
-    branches: [main]
 
 permissions:
   contents: write
@@ -25,10 +23,8 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     if: |
-      github.event_name == 'workflow_dispatch' || 
-      (github.event_name == 'workflow_run' && 
-       github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.outputs.version_changed == 'true')
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
       version: ${{ steps.get_version.outputs.version }}
@@ -44,10 +40,12 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             TAG="${{ github.event.inputs.tag }}"
             echo "version=${TAG#v}" >> $GITHUB_OUTPUT
-          else
-            # workflow_run: get the latest tag created by Version workflow
-            TAG=$(git describe --tags --abbrev=0)
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            TAG="${{ github.ref_name }}"
             echo "version=${TAG#v}" >> $GITHUB_OUTPUT
+          else
+            echo "Unsupported event: ${{ github.event_name }}" >&2
+            exit 1
           fi
 
       - name: Create Release
