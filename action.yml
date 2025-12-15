@@ -23,6 +23,10 @@ inputs:
     description: 'Output only the new version string (dry run, no changes)'
     required: false
     default: 'false'
+  quiet:
+    description: 'Suppress commit list output'
+    required: false
+    default: 'false'
   preset:
     description: 'Versioning strategy (node, rust, git)'
     required: false
@@ -208,6 +212,10 @@ runs:
         
         if [ "${{ inputs.raw }}" = "true" ]; then
           ARGS="$ARGS --raw"
+        fi
+        
+        if [ "${{ inputs.quiet }}" = "true" ]; then
+          ARGS="$ARGS --quiet"
         fi
         
         if [ -n "${{ inputs.preset }}" ]; then
