@@ -85,9 +85,26 @@ grubble --help
 
 ## Configuration
 
-You can use a file-based configuration for Grubble instead of CLI arguments.
+Grubble can be configured using CLI arguments or a `.versionrc.json` file.
 
-Create `.versionrc.json` in your project root:
+### CLI Configuration (Recommended for CI/CD)
+
+All options can be passed as command-line arguments:
+
+```bash
+grubble \
+  --package-files Cargo.toml \
+  --commit-prefix "chore: bump version" \
+  --tag-prefix v \
+  --preset rust \
+  --push \
+  --tag \
+  --release-notes
+```
+
+### File-based Configuration
+
+Alternatively, create `.versionrc.json` in your project root:
 
 ```json
 {
