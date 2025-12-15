@@ -54,6 +54,14 @@ struct Args {
     /// Comma-separated list of files to update (for node/rust preset)
     #[arg(long)]
     package_files: Option<String>,
+
+    /// Git user name for commits
+    #[arg(long)]
+    git_user_name: Option<String>,
+
+    /// Git user email for commits
+    #[arg(long)]
+    git_user_email: Option<String>,
 }
 
 fn log(msg: &str, is_raw: bool) {
@@ -98,6 +106,12 @@ fn run() -> BumperResult<()> {
     if args.release_notes {
         config.release_notes = true;
     }
+    if let Some(git_user_name) = args.git_user_name {
+        config.git_user_name = git_user_name;
+    }
+    if let Some(git_user_email) = args.git_user_email {
+        config.git_user_email = git_user_email;
+    }
 
     let quiet = args.quiet;
 
@@ -116,6 +130,9 @@ fn run() -> BumperResult<()> {
             is_raw,
         );
     }
+
+    // Set git config for commits
+    git::set_git_config(&config.git_user_name, &config.git_user_email)?;
 
     let strategy = load_strategy(&config);
 

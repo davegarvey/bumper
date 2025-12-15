@@ -27,6 +27,12 @@ pub struct Config {
     #[serde(default)]
     pub release_notes: bool,
 
+    #[serde(default = "default_git_user_name")]
+    pub git_user_name: String,
+
+    #[serde(default = "default_git_user_email")]
+    pub git_user_email: String,
+
     #[serde(default = "default_types")]
     pub types: HashMap<String, String>,
 
@@ -48,6 +54,14 @@ fn default_tag_prefix() -> String {
 
 fn default_preset() -> String {
     "git".to_string()
+}
+
+fn default_git_user_name() -> String {
+    "Grubble".to_string()
+}
+
+fn default_git_user_email() -> String {
+    "grubble@users.noreply.github.com".to_string()
 }
 
 fn default_types() -> HashMap<String, String> {
@@ -75,6 +89,8 @@ impl Default for Config {
             tag: false,
             preset: default_preset(),
             release_notes: false,
+            git_user_name: default_git_user_name(),
+            git_user_email: default_git_user_email(),
             types: default_types(),
             raw: false,
         }
