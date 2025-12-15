@@ -133,7 +133,13 @@ fn run() -> BumperResult<()> {
     // Sync package version if behind latest tag
     if let Some(tag_ver) = last_tag_version {
         if config.preset != "git" && current_version < tag_ver {
-            log(&format!("Package version {} is behind latest tag version {}, syncing...", current_version, tag_ver), is_raw);
+            log(
+                &format!(
+                    "Package version {} is behind latest tag version {}, syncing...",
+                    current_version, tag_ver
+                ),
+                is_raw,
+            );
             let updated_files = strategy.update_files(&tag_ver)?;
             if !updated_files.is_empty() {
                 git::commit_changes(
