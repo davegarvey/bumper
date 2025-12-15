@@ -67,9 +67,6 @@ jobs:
       if: github.event_name != 'workflow_dispatch' || github.event.inputs.skip_version_bump != 'true'
       run: |
         ./target/release/grubble \
-          --package-files Cargo.toml \
-          --commit-prefix "chore: bump version" \
-          --tag-prefix v \
           --git-user-name "github-actions[bot]" \
           --git-user-email "41898282+github-actions[bot]@users.noreply.github.com" \
           --preset rust \
