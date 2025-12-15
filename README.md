@@ -198,6 +198,16 @@ This ensures version consistency across strategies and prevents conflicts when c
 - **Monorepos**: Use `packageFiles` array for multiple packages
 - **CI Permissions**: Grant write access to contents/commits for automated releases
 
+### Local Git Hooks
+
+Run once to enable the shared hooks path:
+
+```bash
+git config core.hooksPath scripts/hooks
+```
+
+The pre-commit hook runs `cargo fmt --all` (fixes formatting) and `cargo clippy --all-targets --all-features -- -D warnings` so commits fail early if code would break CI checks. You can temporarily skip steps with `SKIP_FMT=1` or `SKIP_CLIPPY=1`, and opt into running tests with `RUN_TESTS=1`.
+
 ## GitHub Actions
 
 ### Recommended: Use GitHub Action (Simplest)
