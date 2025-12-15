@@ -113,7 +113,10 @@ Alternatively, create `.versionrc.json` in your project root:
   "tagPrefix": "v",
   "push": false,
   "tag": false,
-  "preset": "rust"
+  "preset": "rust",
+  "types": {
+    "config": "patch"
+  }
 }
 ```
 
