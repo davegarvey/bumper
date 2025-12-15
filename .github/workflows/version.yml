@@ -49,10 +49,3 @@ jobs:
     - name: Bump version
       if: github.event_name != 'workflow_dispatch' || github.event.inputs.skip_version_bump != 'true'
       run: ./target/release/grubble --push --tag --release-notes
-
-    - name: Trigger Release
-      if: success() && (github.event_name != 'workflow_dispatch' || github.event.inputs.skip_version_bump != 'true')
-      run: |
-        TAG=$(git describe --tags --abbrev=0)
-        VERSION=${TAG#v}
-        gh workflow run Release --ref main -f tag=$VERSION
