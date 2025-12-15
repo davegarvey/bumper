@@ -23,6 +23,10 @@ inputs:
     description: 'Output only the new version string (dry run, no changes)'
     required: false
     default: 'false'
+  quiet:
+    description: 'Suppress commit list output'
+    required: false
+    default: 'false'
   preset:
     description: 'Versioning strategy (node, rust, git)'
     required: false
@@ -37,6 +41,14 @@ inputs:
     default: ''
   package-files:
     description: 'Comma-separated list of files to update'
+    required: false
+    default: ''
+  git-user-name:
+    description: 'Git user name for commits'
+    required: false
+    default: ''
+  git-user-email:
+    description: 'Git user email for commits'
     required: false
     default: ''
 
@@ -202,6 +214,10 @@ runs:
           ARGS="$ARGS --raw"
         fi
         
+        if [ "${{ inputs.quiet }}" = "true" ]; then
+          ARGS="$ARGS --quiet"
+        fi
+        
         if [ -n "${{ inputs.preset }}" ]; then
           ARGS="$ARGS --preset ${{ inputs.preset }}"
         fi
@@ -216,6 +232,14 @@ runs:
         
         if [ -n "${{ inputs.package-files }}" ]; then
           ARGS="$ARGS --package-files ${{ inputs.package-files }}"
+        fi
+        
+        if [ -n "${{ inputs.git-user-name }}" ]; then
+          ARGS="$ARGS --git-user-name \"${{ inputs.git-user-name }}\""
+        fi
+        
+        if [ -n "${{ inputs.git-user-email }}" ]; then
+          ARGS="$ARGS --git-user-email \"${{ inputs.git-user-email }}\""
         fi
         
         echo "Running: grubble $ARGS"
