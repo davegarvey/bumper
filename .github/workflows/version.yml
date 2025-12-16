@@ -73,6 +73,7 @@ jobs:
           --push \
           --tag \
           --release-notes \
+          --changelog \
           --update-major-tag
 
     - name: Check version change
