@@ -1,0 +1,10 @@
+{
+    "preset": "rust",
+    "changelog": true,
+    "push": true,
+    "tag": true,
+    "releaseNotes": true,
+    "updateMajorTag": true,
+    "gitUserName": "github-actions[bot]",
+    "gitUserEmail": "41898282+github-actions[bot]@users.noreply.github.com"
+}
