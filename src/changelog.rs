@@ -133,8 +133,7 @@ fn generate_changelog_entry_at_path(
         }
         entry.push_str(&format!("- {}\n", change.description));
     }
-    // Add blank line after final list
-    entry.push('\n');
+    // Don't add extra blank line after final list - the header already provides spacing
 
     // Read existing changelog or create header
     let mut content = if changelog_path.exists() {
@@ -428,7 +427,7 @@ mod tests {
         assert!(content.contains("\n\n### Fixed\n\n"));
 
         // Verify the list ends with a blank line
-        assert!(content.contains("- resolve bug\n\n"));
+        assert!(content.contains("- resolve bug\n"));
 
         // Test: No triple newlines (double blank lines) should exist
         assert!(
@@ -465,8 +464,8 @@ mod tests {
 
         // Try to run markdownlint-cli if available
         // Install with: npm install -g markdownlint-cli
-        let result = Command::new("markdownlint")
-            .arg(changelog_path.to_str().unwrap())
+        let result = Command::new("npx")
+            .args(["markdownlint-cli", changelog_path.to_str().unwrap()])
             .output();
 
         match result {
