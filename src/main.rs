@@ -2,6 +2,7 @@ use clap::Parser;
 use std::process;
 
 mod analyser;
+mod changelog;
 mod config;
 mod error;
 mod git;
@@ -68,6 +69,10 @@ struct Args {
     /// Update minor version tag (e.g., v4.1 -> v4.1.x)
     #[arg(long)]
     update_minor_tag: bool,
+
+    /// Generate and maintain a CHANGELOG.md file
+    #[arg(long)]
+    changelog: bool,
 }
 
 fn log(msg: &str, is_raw: bool) {
@@ -123,6 +128,9 @@ fn run() -> BumperResult<()> {
     }
     if args.update_minor_tag {
         config.update_minor_tag = true;
+    }
+    if args.changelog {
+        config.changelog = true;
     }
 
     let quiet = args.quiet;
@@ -251,10 +259,21 @@ fn run() -> BumperResult<()> {
     let updated_files = strategy.update_files(&new_version)?;
     log(&format!("Updated to {}", new_version), is_raw);
 
-    if !updated_files.is_empty() {
+    // Generate changelog if enabled
+    if config.changelog {
+        changelog::generate_changelog_entry(&new_version, &commits, analysis.bump)?;
+        log("Updated CHANGELOG.md", is_raw);
+    }
+
+    let mut all_updated_files = updated_files.clone();
+    if config.changelog {
+        all_updated_files.push("CHANGELOG.md".to_string());
+    }
+
+    if !all_updated_files.is_empty() {
         git::commit_changes(
             &new_version.to_string(),
-            &updated_files,
+            &all_updated_files,
             &config.commit_prefix,
         )?;
     }

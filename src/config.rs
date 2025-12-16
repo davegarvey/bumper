@@ -44,6 +44,10 @@ pub struct Config {
     #[serde(default)]
     pub update_minor_tag: bool,
 
+    /// Generate and maintain a CHANGELOG.md file
+    #[serde(default)]
+    pub changelog: bool,
+
     #[serde(skip)]
     pub raw: bool,
 }
@@ -102,6 +106,7 @@ impl Default for Config {
             types: default_types(),
             update_major_tag: false,
             update_minor_tag: false,
+            changelog: false,
             raw: false,
         }
     }

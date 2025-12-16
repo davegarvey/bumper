@@ -71,6 +71,9 @@ grubble --raw
 # Suppress commit list output
 grubble --quiet
 
+# Generate and maintain CHANGELOG.md
+grubble --changelog
+
 # With explicit options overrides
 grubble --tag --tag-prefix "release-v"
 grubble --commit-prefix "chore(release): bump"
@@ -105,6 +108,7 @@ grubble \
   --preset rust \
   --push \
   --tag \
+  --changelog \
   --release-notes
 ```
 
@@ -119,6 +123,7 @@ Alternatively, create `.versionrc.json` in your project root:
   "tagPrefix": "v",
   "push": false,
   "tag": false,
+  "changelog": true,
   "preset": "rust",
   "types": {
     "config": "patch"
@@ -133,6 +138,7 @@ Alternatively, create `.versionrc.json` in your project root:
 - **`tagPrefix`**: Prefix for git tags (default: `"v"`)
 - **`push`**: Whether to push commits/tags to remote (default: `false`)
 - **`tag`**: Whether to create git tags for versions (default: `false`)
+- **`changelog`**: Generate and maintain a CHANGELOG.md file following "Keep a Changelog" format (default: `false`)
 - **`updateMajorTag`**: Update major version tag (e.g., v4 pointing to latest v4.x.x) (default: `false`)
 - **`updateMinorTag`**: Update minor version tag (e.g., v4.1 pointing to latest v4.1.x) (default: `false`)
 - **`gitUserName`**: Git user name for commits (default: `"grubble-bot"`)
@@ -303,7 +309,99 @@ grubble --tag --push --update-major-tag --update-minor-tag
 - **CI/CD**: Automate this in your release workflow for consistency
 - **GitHub Actions**: Essential for action maintainers to provide a good user experience
 
-### Best Practices
+## Changelog Generation
+
+**Best for**: Projects that want automated, standardized changelogs
+
+### What It Does
+
+When enabled, Grubble automatically generates and maintains a `CHANGELOG.md` file following the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format:
+
+- Categorizes commits into standard sections (Added, Changed, Fixed, etc.)
+- Groups changes by semantic category based on commit type
+- Maintains chronological version history
+- Marks breaking changes clearly
+- Follows industry-standard format for readability
+
+### Usage
+
+**CLI:**
+
+```bash
+# Enable changelog generation
+grubble --changelog --tag --push
+
+# Combine with other options
+grubble --changelog --preset rust --tag
+```
+
+**GitHub Action:**
+
+```yaml
+- uses: davegarvey/grubble@v4
+  with:
+    changelog: true
+    tag: true
+    push: true
+```
+
+**Configuration file (.versionrc.json):**
+
+```json
+{
+  "changelog": true,
+  "tag": true,
+  "push": true
+}
+```
+
+### Commit Type Mapping
+
+Commits are automatically categorized based on their conventional commit type:
+
+- `feat:` → **Added** section
+- `fix:` → **Fixed** section
+- `perf:`, `refactor:` → **Changed** section
+- `revert:` → **Removed** section
+- `security:` → **Security** section
+- Breaking changes (with `!` or `BREAKING CHANGE`) → **Changed** section with **BREAKING:** prefix
+
+### Example Output
+
+```markdown
+## [1.2.0] - 2025-12-16
+
+### Added
+
+- Add user authentication system
+- Add support for custom themes
+
+### Fixed
+
+- Fix memory leak in cache handler
+- Fix incorrect date formatting
+
+### Changed
+
+- **BREAKING:** Refactor API endpoints to use REST conventions
+```
+
+### When to Use
+
+✅ **Use changelog generation when:**
+
+- You want automated, standardized release notes
+- Following Keep a Changelog format for consistency
+- Need human-readable project history
+- Publishing libraries or tools with user-facing changes
+
+⚠️ **Consider:**
+
+- The changelog will be committed with version bump commits
+- Format follows conventional commit types strictly
+- Changes are grouped by semantic category, not chronologically
+
+## Best Practices
 
 - **Branch Protection**: Protect your main branch and require CI checks to pass
 - **Conventional Commits**: Ensure all commits follow [conventional commit format](https://www.conventionalcommits.org/en/v1.0.0/)
@@ -403,9 +501,10 @@ jobs:
 2. Analyzes commits since last tag
 3. Determines version bump (major/minor/patch) based on conventional commits
 4. Updates package files
-5. Creates git commit
-6. Optionally creates git tag
-7. Optionally pushes to remote
+5. Optionally generates/updates CHANGELOG.md
+6. Creates git commit
+7. Optionally creates git tag
+8. Optionally pushes to remote
 
 ## Commit Types
 
