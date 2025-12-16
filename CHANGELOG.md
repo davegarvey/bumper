@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add changelog generation feature
+
 ### Changed
 
 - Merge pull request #40 from davegarvey:changelog
@@ -18,4 +19,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - reduce GitHub Action output verbosity
 - Merge pull request #38 from davegarvey:bumper-to-grubble
 - update bumper references to grubble
-
